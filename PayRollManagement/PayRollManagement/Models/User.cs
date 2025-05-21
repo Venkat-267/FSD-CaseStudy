@@ -13,5 +13,8 @@
         public Role Role { get; set; }
 
         public Employee Employee { get; set; }
+        public ICollection<AuditLog> AuditLogs { get; set; }
+        public ICollection<Payroll> ProcessedPayrolls { get; set; }
+        public ICollection<LeaveRequest> ApprovedLeaveRequests { get; set; }
     }
 }

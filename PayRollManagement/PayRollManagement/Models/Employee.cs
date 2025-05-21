@@ -16,5 +16,9 @@
 
         public User User { get; set; }
         public Employee Manager { get; set; }
+        public ICollection<Employee> Subordinates { get; set; }
+        public ICollection<Payroll> Payrolls { get; set; }
+        public ICollection<LeaveRequest> LeaveRequests { get; set; }
+        public ICollection<SalaryStructure> SalaryStructures { get; set; }
     }
 }

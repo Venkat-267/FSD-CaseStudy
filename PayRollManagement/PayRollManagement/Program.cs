@@ -1,3 +1,5 @@
+using PayRollManagement.Models;
+
 namespace PayRollManagement
 {
     public class Program
@@ -12,6 +14,7 @@ namespace PayRollManagement
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<PayMasterDbContext>();
 
             var app = builder.Build();
 
