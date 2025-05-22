@@ -18,7 +18,9 @@ namespace PayRollManagement
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<PayMasterDbContext>();
 
+
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             var app = builder.Build();
 
