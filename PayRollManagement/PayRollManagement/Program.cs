@@ -1,4 +1,6 @@
+using PayRollManagement.Interface;
 using PayRollManagement.Models;
+using PayRollManagement.Repository;
 
 namespace PayRollManagement
 {
@@ -15,6 +17,8 @@ namespace PayRollManagement
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<PayMasterDbContext>();
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             var app = builder.Build();
 
