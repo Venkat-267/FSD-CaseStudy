@@ -21,6 +21,8 @@ namespace PayRollManagement
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+
 
             var app = builder.Build();
 
