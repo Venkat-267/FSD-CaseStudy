@@ -7,7 +7,7 @@
         public decimal BasicPay { get; set; }
         public decimal? HRA { get; set; }
         public decimal? Allowances { get; set; }
-        public decimal? Deductions { get; set; }
+        public decimal? PFPercentage { get; set; }
         public DateTime EffectiveFrom { get; set; }
 
         public Employee Employee { get; set; }

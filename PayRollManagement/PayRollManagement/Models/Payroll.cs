@@ -2,7 +2,7 @@
 {
     public class Payroll
     {
-        public int PayrollId { get; set; }
+        public int PayRollId { get; set; }
         public int EmployeeId { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
