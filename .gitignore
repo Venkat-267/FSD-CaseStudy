@@ -19,6 +19,7 @@
 ##############################
 # ASP.NET Core Configuration #
 ##############################
+**/appsettings.json
 **/appsettings.Development.json
 **/appsettings.Local.json
 **/appsettings.*.json       # Optional – ignore env-specific settings
@@ -59,3 +60,4 @@ Desktop.ini
 *.tmp
 *.bak
 *.swp
+/PayRollManagement/PayRollManagement/appsettings.json

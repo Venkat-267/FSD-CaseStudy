@@ -70,7 +70,7 @@ namespace PayRollManagement.Repository
             }).ToListAsync();
         }
 
-        public async Task<List<LeaveRequestDto>> SearchLeaveRequestsAsync(int? employeeId = null, string status = null, string leaveType = null, DateTime? from = null, DateTime? to = null)
+        public async Task<List<LeaveRequestDto>> SearchLeaveRequests(int? employeeId = null, string status = null, string leaveType = null, DateTime? from = null, DateTime? to = null)
         {
             var query = _context.LeaveRequests.AsQueryable();
 

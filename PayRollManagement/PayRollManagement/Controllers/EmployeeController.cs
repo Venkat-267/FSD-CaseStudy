@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PayRollManagement.DTO;
 using PayRollManagement.Interface;
@@ -30,6 +31,8 @@ namespace PayRollManagement.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet("all-users")]
         public async Task<IActionResult> GetAll()
         {
             var employees = await _employeeRepo.GetAllEmployees();
@@ -44,6 +47,14 @@ namespace PayRollManagement.Controllers
             if (emp == null) return NotFound(new { Error = "Employee not found" });
             return Ok(emp);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? name, [FromQuery] string? department, [FromQuery] string? designation, [FromQuery] int? managerId)
+        {
+            var result = await _employeeRepo.SearchEmployeesAsync(name, department, designation, managerId);
+            return Ok(result);
+        }
+
 
         [HttpPut("update/{employeeId}")]
         public async Task<IActionResult> Update(int employeeId, EmployeeDto dto)

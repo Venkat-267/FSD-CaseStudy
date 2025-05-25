@@ -5,5 +5,10 @@ use PayMasterDb;
 select * from roles;
 
 select * from Users;
+select * from AuditLogs;
+select * from RefreshTokens;
 
 select * from Employees;
+
+
+

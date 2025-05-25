@@ -8,7 +8,7 @@ namespace PayRollManagement.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\mssqllocaldb;Initial Catalog=PayMasterDb;Integrated Security=True;");
+             // optionsBuilder.UseSqlServer("");
 
             //base.OnConfiguring(optionsBuilder);
         }
@@ -84,5 +84,6 @@ namespace PayRollManagement.Models
         public DbSet<Payroll> Payrolls { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

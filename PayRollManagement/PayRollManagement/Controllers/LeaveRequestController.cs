@@ -10,9 +10,11 @@ namespace PayRollManagement.Controllers
     public class LeaveRequestController : ControllerBase
     {
         private readonly ILeaveRequestRepository _leaveRepo;
-        public LeaveRequestController(ILeaveRequestRepository leaveRepo)
+        private readonly IAdminRepository _adminRepo;
+        public LeaveRequestController(ILeaveRequestRepository leaveRepo, IAdminRepository adminRepo)
         {
             _leaveRepo = leaveRepo;
+            _adminRepo = adminRepo;
         }
 
         [HttpPost("submit")]
@@ -37,6 +39,12 @@ namespace PayRollManagement.Controllers
             {
                 return BadRequest(new { Error = "Invalid Leave or Action" });
             }
+            await _adminRepo.GenerateAuditLogAsync(new AuditLogDto
+            {
+                UserId = approverId,
+                Action = $"{action} Leave",
+                Description = $"Leave #{leaveId} {action}ed by user {approverId}"
+            });
             return Ok(new { Message = $"Leave {action.ToLower()}ed successfully!" });
         }
 

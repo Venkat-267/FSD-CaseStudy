@@ -94,5 +94,39 @@ namespace PayRollManagement.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<EmployeeDto>> SearchEmployeesAsync(string? name = null, string? department = null, string? designation = null, int? managerId = null)
+        {
+            var query = _context.Employees.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(e => (e.FirstName + " " + e.LastName).Contains(name));
+
+            if (!string.IsNullOrEmpty(department))
+                query = query.Where(e => e.Department == department);
+
+            if (!string.IsNullOrEmpty(designation))
+                query = query.Where(e => e.Designation == designation);
+
+            if (managerId.HasValue)
+                query = query.Where(e => e.ManagerId == managerId);
+
+            return await query
+                .Select(e => new EmployeeDto
+                {
+                    EmployeeId = e.EmployeeId,
+                    UserId = e.UserId,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Email = e.Email,
+                    Phone = e.Phone,
+                    Address = e.Address,
+                    Designation = e.Designation,
+                    Department = e.Department,
+                    DateOfJoining = e.DateOfJoining,
+                    ManagerId = e.ManagerId
+                }).ToListAsync();
+        }
+
     }
 }

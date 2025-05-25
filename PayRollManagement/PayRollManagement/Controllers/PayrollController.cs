@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PayRollManagement.DTO;
 using PayRollManagement.Interface;
 
 namespace PayRollManagement.Controllers
@@ -9,10 +10,12 @@ namespace PayRollManagement.Controllers
     public class PayrollController : ControllerBase
     {
         private readonly IPayrollRepository _payrollRepo;
+        private readonly IAdminRepository _adminRepo;
 
-        public PayrollController(IPayrollRepository payrollRepo)
+        public PayrollController(IPayrollRepository payrollRepo, IAdminRepository adminRepo)
         {
             _payrollRepo = payrollRepo;
+            _adminRepo = adminRepo;
         }
 
         [HttpPost("generate")]
@@ -21,6 +24,12 @@ namespace PayRollManagement.Controllers
             try
             {
                 var result = await _payrollRepo.GeneratePayrollAsync(employeeId, month, year, processedBy);
+                await _adminRepo.GenerateAuditLogAsync(new AuditLogDto
+                {
+                    UserId = processedBy,
+                    Action = "Generate Payroll",
+                    Description = $"Payroll generated for EmployeeId={employeeId}, Month={month}, Year={year}"
+                });
                 return Ok(result);
             }
             catch (Exception ex)
