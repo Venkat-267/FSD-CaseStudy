@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PayRollManagement.DTO;
 using PayRollManagement.Interface;
+using PayRollManagement.Models;
 
 namespace PayRollManagement.Controllers
 {
@@ -11,11 +13,13 @@ namespace PayRollManagement.Controllers
     {
         private readonly IPayrollRepository _payrollRepo;
         private readonly IAdminRepository _adminRepo;
+        private readonly PayMasterDbContext _context;
 
-        public PayrollController(IPayrollRepository payrollRepo, IAdminRepository adminRepo)
+        public PayrollController(IPayrollRepository payrollRepo, IAdminRepository adminRepo, PayMasterDbContext context)
         {
             _payrollRepo = payrollRepo;
             _adminRepo = adminRepo;
+            _context = context;
         }
 
         [HttpPost("generate")]
@@ -36,6 +40,37 @@ namespace PayRollManagement.Controllers
             {
                 return BadRequest(new { Error = ex.Message });
             }
+        }
+
+        [HttpPost("verify/{payrollId}")]
+        public async Task<IActionResult> VerifyPayroll(int payrollId, [FromQuery] int userId)
+        {
+            var payroll = await _context.Payrolls.FindAsync(payrollId);
+            if (payroll == null) return NotFound();
+
+            payroll.IsVerified = true;
+            payroll.VerifiedBy = userId;
+            payroll.VerifiedDate = DateTime.Now;
+
+            _context.Payrolls.Update(payroll);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Payroll verified." });
+        }
+
+        [HttpPost("mark-paid/{payrollId}")]
+        public async Task<IActionResult> MarkPayrollAsPaid(int payrollId, [FromQuery] string mode)
+        {
+            var payroll = await _context.Payrolls.FindAsync(payrollId);
+            if (payroll == null || !payroll.IsVerified)
+                return BadRequest("Payroll not found or not verified.");
+
+            payroll.IsPaid = true;
+            payroll.PaidDate = DateTime.Now;
+            payroll.PaymentMode = mode;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { Message = "Payment processed." });
         }
 
         [HttpGet("{employeeId}/{month}/{year}")]

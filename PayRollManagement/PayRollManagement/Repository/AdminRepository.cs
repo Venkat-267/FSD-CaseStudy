@@ -92,5 +92,43 @@ namespace PayRollManagement.Repository
                 }).ToListAsync();
         }
 
+        public async Task<List<PayrollSummaryDto>> GetPayrollSummaryAsync(int month, int year, string? department = null)
+        {
+            var query = _context.Payrolls
+                .Where(p => p.Month == month && p.Year == year)
+                .Include(p => p.Employee)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(department))
+                query = query.Where(p => p.Employee.Department == department);
+
+            return await query.Select(p => new PayrollSummaryDto
+            {
+                EmployeeId = p.EmployeeId,
+                EmployeeName = p.Employee.FirstName + " " + p.Employee.LastName,
+                Month = p.Month,
+                Year = p.Year,
+                GrossPay = p.GrossPay ?? 0,
+                EmployeePF = p.EmployeePF ?? 0,
+                ProfessionalTax = p.ProfessionalTax ?? 0,
+                NetPay = p.NetPay ?? 0
+            }).ToListAsync();
+        }
+
+
+        public async Task<List<TaxStatementDto>> GetTaxStatementsAsync(int year)
+        {
+            return await _context.Payrolls
+                .Where(p => p.Year == year)
+                .GroupBy(p => new { p.EmployeeId, p.Employee.FirstName, p.Employee.LastName })
+                .Select(g => new TaxStatementDto
+                {
+                    EmployeeId = g.Key.EmployeeId,
+                    EmployeeName = g.Key.FirstName + " " + g.Key.LastName,
+                    TotalEmployeePF = g.Sum(x => x.EmployeePF ?? 0),
+                    TotalProfessionalTax = g.Sum(x => x.ProfessionalTax ?? 0)
+                })
+                .ToListAsync();
+        }
     }
 }

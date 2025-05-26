@@ -58,10 +58,19 @@ namespace PayRollManagement.Models
                 .HasForeignKey(p => p.EmployeeId);
 
             // One-to-many: User (Processor) -> Payrolls
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.ProcessedPayrolls)
-                .WithOne(p => p.Processor)
+            // Processor relationship
+            modelBuilder.Entity<Payroll>()
+                .HasOne(p => p.Processor)
+                .WithMany(u => u.ProcessedPayrolls)
                 .HasForeignKey(p => p.ProcessedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Verifier relationship
+            // Avoid multiple cascade paths by restricting deletion
+            modelBuilder.Entity<Payroll>()
+                .HasOne(p => p.Verifier)
+                .WithMany(u => u.VerifiedPayrolls)
+                .HasForeignKey(p => p.VerifiedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // One-to-many: Employee -> SalaryStructures
@@ -80,8 +89,11 @@ namespace PayRollManagement.Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<TimeSheet> TimeSheets { get; set; }
         public DbSet<SalaryStructure> SalaryStructures { get; set; }
         public DbSet<Payroll> Payrolls { get; set; }
+        public DbSet<PayrollPolicy> PayrollPolicies { get; set; }
+        public DbSet<Benefit> Benefits { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }

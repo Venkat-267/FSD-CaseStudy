@@ -15,6 +15,7 @@
         public Employee Employee { get; set; }
         public ICollection<AuditLog> AuditLogs { get; set; }
         public ICollection<Payroll> ProcessedPayrolls { get; set; }
+        public ICollection<Payroll> VerifiedPayrolls { get; set; }
         public ICollection<LeaveRequest> ApprovedLeaveRequests { get; set; }
     }
 }

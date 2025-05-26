@@ -75,10 +75,14 @@ namespace PayRollManagement
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<ITimeSheetRepository, TimeSheetRepository>();
             builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
             builder.Services.AddScoped<ISalaryStructureRepository, SalaryStructureRepository>();
             builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+            builder.Services.AddScoped<IPayrollPolicyRepository, PayrollPolicyRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IBenefitRepository, BenefitRepository>();
+
 
             builder.Services.AddDbContext<PayMasterDbContext>(options =>
             {
@@ -88,7 +92,7 @@ namespace PayRollManagement
 
 
             var app = builder.Build();
-
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

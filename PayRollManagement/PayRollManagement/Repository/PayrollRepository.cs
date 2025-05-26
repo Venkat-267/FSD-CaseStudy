@@ -32,11 +32,24 @@ namespace PayRollManagement.Repository
             if (salary == null)
                 throw new Exception("No salary structure found for this employee.");
 
-            decimal gross = salary.BasicPay + (salary.HRA ?? 0) + (salary.Allowances ?? 0);
-            decimal pfRate = (salary.PFPercentage ?? 12) / 100;
+            var policy = await _context.PayrollPolicies
+                .OrderByDescending(p => p.EffectiveFrom)
+                .FirstOrDefaultAsync();
+
+            // ✅ Get all benefits for this employee (optional: filter by month/year if you want)
+            var benefits = await _context.Benefits
+                .Where(b => b.EmployeeId == employeeId)
+                .ToListAsync();
+
+            decimal benefitTotal = benefits.Sum(b => b.Amount);
+
+            // Base + HRA + Allowances + Benefits
+            decimal gross = salary.BasicPay + (salary.HRA ?? 0) + (salary.Allowances ?? 0) + benefitTotal;
+            decimal pfRate = (salary.PFPercentage ?? policy?.DefaultPFPercent ?? 12) / 100;
+            decimal professionalTax = policy?.ProfessionalTax ?? 0;
             decimal employeePF = salary.BasicPay * pfRate;
             decimal employerPF = salary.BasicPay * pfRate;
-            decimal netPay = gross - employeePF;
+            decimal netPay = gross - employeePF - professionalTax;
 
             var payroll = new Payroll
             {
@@ -46,6 +59,7 @@ namespace PayRollManagement.Repository
                 GrossPay = gross,
                 EmployeePF = employeePF,
                 EmployerPF = employerPF,
+                ProfessionalTax = professionalTax,
                 NetPay = netPay,
                 ProcessedBy = processedBy,
                 ProcessedDate = DateTime.Now
@@ -63,6 +77,7 @@ namespace PayRollManagement.Repository
                 GrossPay = payroll.GrossPay,
                 EmployeePF = payroll.EmployeePF,
                 EmployerPF = payroll.EmployerPF,
+                ProfessionalTax = payroll.ProfessionalTax,
                 NetPay = payroll.NetPay,
                 ProcessedBy = payroll.ProcessedBy,
                 ProcessedDate = payroll.ProcessedDate
