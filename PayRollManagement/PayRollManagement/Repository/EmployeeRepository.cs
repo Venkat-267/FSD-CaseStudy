@@ -95,6 +95,23 @@ namespace PayRollManagement.Repository
             return true;
         }
 
+        public async Task<bool> UpdatePersonalInfoAsync(int userId, UpdatePersonalInfoDto dto)
+        {
+            var emp = await _context.Employees.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (emp == null)
+            {
+                return false;
+            }
+
+            emp.Email = dto.Email ?? emp.Email;
+            emp.Phone = dto.Phone ?? emp.Phone;
+            emp.Address = dto.Address ?? emp.Address;
+
+            _context.Employees.Update(emp);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<List<EmployeeDto>> SearchEmployeesAsync(string? name = null, string? department = null, string? designation = null, int? managerId = null)
         {
             var query = _context.Employees.AsQueryable();

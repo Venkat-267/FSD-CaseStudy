@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PayRollManagement.DTO;
 using PayRollManagement.Interface;
+using System.Security.Claims;
 
 namespace PayRollManagement.Controllers
 {
@@ -62,6 +63,18 @@ namespace PayRollManagement.Controllers
             var success = await _employeeRepo.UpdateEmployee(employeeId, dto);
             if (!success) return NotFound(new { Error = "Employee not found" });
             return Ok(new { Message = "Employee updated" });
+        }
+
+        [HttpPut("update-personal")]
+        public async Task<IActionResult> UpdatePersonalInfo([FromBody] UpdatePersonalInfoDto dto)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var success = await _employeeRepo.UpdatePersonalInfoAsync(userId, dto);
+            if (!success)
+                return NotFound(new { Error = "Employee not found" });
+
+            return Ok(new { Message = "Personal information updated successfully." });
         }
     }
 }

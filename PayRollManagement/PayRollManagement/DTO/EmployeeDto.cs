@@ -14,4 +14,12 @@
         public DateTime? DateOfJoining { get; set; }
         public int? ManagerId { get; set; }
     }
+
+    public class UpdatePersonalInfoDto
+    {
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? Address { get; set; }
+    }
+
 }
